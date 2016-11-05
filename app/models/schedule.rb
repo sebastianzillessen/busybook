@@ -2,26 +2,27 @@ require './lib/ics'
 
 class Schedule < ActiveRecord::Base
   belongs_to :calendar
+  has_one :user, through: :calendar
 
-  validates :component,  presence: true
-  validates :uri,        presence: true, uniqueness: true
-  validates :ics,        presence: true
+  validates :component, presence: true
+  validates :uri, presence: true, uniqueness: true
+  validates :ics, presence: true
 
-  def Schedule.in_time_range(calendar, range_start, range_end)
+  def self.in_time_range(calendar, range_start, range_end)
     sql = ''
     args = []
 
     if range_start
-       sql += '? <= date_start '
-       args << range_start
+      sql += '? <= date_start '
+      args << range_start
     end
 
     if range_end
-	if sql != ""
-	    sql += 'AND '
-	end
-	sql += 'date_end <= ? '
-	args << range_end
+      if sql != ""
+        sql += 'AND '
+      end
+      sql += 'date_end <= ? '
+      args << range_end
     end
 
     self.where(calendar: Calendar.find_by_uri!(calendar)).where(sql, *args)
@@ -51,10 +52,14 @@ class Schedule < ActiveRecord::Base
       raise "unsupported calendar object: '#{ics.comp_type}'"
     end
 
-    self.ics        = body
-    self.component  = ics.comp_type
+    self.ics = body
+    self.component = ics.comp_type
     self.date_start = ics.comp('DTSTART', date: true)
-    self.date_end   = ics.comp('DTEND',   date: true)
-    self.summary    = ics.comp('SUMMARY')
+    self.date_end = ics.comp('DTEND', date: true)
+    self.summary = ics.comp('SUMMARY')
+  end
+
+  def status=(new_status)
+
   end
 end

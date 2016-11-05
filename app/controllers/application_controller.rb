@@ -1,11 +1,13 @@
 class ApplicationController < ActionController::Base
   before_action :authenticate
 
-  rescue_from ActiveRecord::RecordNotFound,  with: :handle_404
+  rescue_from ActiveRecord::RecordNotFound, with: :handle_404
+
 
   private
 
-  def handle_404
+  def handle_404(exception)
+    logger.warn(exception)
     head :not_found
   end
 

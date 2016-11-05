@@ -1,11 +1,12 @@
 class Calendar < ActiveRecord::Base
   belongs_to :user
   has_many :schedules, dependent: :destroy
-  validates :uri, uniqueness: true
+
+  validates :uri, uniqueness: {scope: :user}
 
   def props
     props_json = self.props_json
-    if props_json.length >= 2 
+    if props_json.length >= 2
       ActiveSupport::JSON.decode(props_json)
     else
       {}

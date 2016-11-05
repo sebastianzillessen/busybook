@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160407084137) do
+ActiveRecord::Schema.define(version: 20161105163125) do
 
   create_table "calendars", force: :cascade do |t|
     t.text     "props_json"
@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 20160407084137) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "uri"
-    t.index ["uri"], name: "index_calendars_on_uri", unique: true
+    t.index ["uri", "user_id"], name: "index_calendars_on_uri_and_user_id", unique: true
     t.index ["user_id"], name: "index_calendars_on_user_id"
   end
 

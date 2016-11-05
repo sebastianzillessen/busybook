@@ -10,6 +10,7 @@ A CalDAV server built on Ruby on Rails.
 ```
 $ gem install bundler
 $ bundle install --path vendor/bundle --jobs 4 --without postgres mysql
+$ cp config/database.yml.example config/database.yml
 $ bundle exec rails db:migrate
 $ bundle exec rails user:add username=chandler password=123
 $ bundle exec rails s

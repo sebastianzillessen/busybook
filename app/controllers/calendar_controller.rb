@@ -14,46 +14,50 @@ class CalendarController < ApplicationController
   def options
     methods = %w(OPTIONS GET PUT DELETE MKCALENDAR PROPFIND PROPPATCH REPORT COPY MOVE)
     headers['Allow'] = methods.join(', ')
-    headers['DAV']   = '1, 2, calendar-access, calendarserver-subscribed'
+    headers['DAV'] = '1, 2, calendar-access, calendarserver-subscribed'
     head :ok
   end
 
   def get
-    entry = Schedule.find_by_uri!(params[:calendar_object])
+    entry = @user.schedules.find_by_uri!(params[:calendar_object])
     render status: :ok, body: entry.ics, content_type: 'text/calendar'
   end
 
   def put
-    uri      = params[:calendar_object]
+    uri = params[:calendar_object]
     calendar = params[:calendar]
 
     # handle If-Match
-    sched = Schedule.find_by_uri(uri)
+    sched = @user.schedules.find_by_uri(uri)
     if request.headers.key?("If-Match")
-       unless sched
-          return head :precondition_failed
-       end
+      unless sched
+        logger.warn "Precondition_failed: #{sched}"
+        return head :precondition_failed
+      end
 
-       if getetag(sched) != remove_etag_prefix(request.headers["If-Match"])
-          logger.warn "etag mismatch: '#{getetag(sched)}' '#{remove_etag_prefix(request.headers["If-Match"])}', ignoring"
-          # return head :precondition_failed
-       end
+      if getetag(sched) != remove_etag_prefix(request.headers["If-Match"])
+        logger.warn "etag mismatch: '#{getetag(sched)}' '#{remove_etag_prefix(request.headers["If-Match"])}', ignoring"
+        # return head :precondition_failed
+      end
     end
 
-    sched = Schedule.new(uri: uri) unless sched
-    sched.calendar = Calendar.find_by_uri!(calendar)
+    sched = @user.schedules.new(uri: uri) unless sched
+    sched.calendar = @user.calendars.find_by_uri!(calendar)
     sched.set_ics(rawrequest)
-    sched.save!
-
-    head :created
+    if (sched.save)
+      head :created
+    else
+      logger.warn "Could not save Schedule Object: #{sched.errors}"
+      head :not_acceptable
+    end
   end
 
   def delete
-    cal = Calendar.find_by_uri!(params[:calendar])
+    cal = @user.calendars.find_by_uri!(params[:calendar])
     if params[:calendar_object] == ""
       cal.destroy
     else
-      sched = Schedule.find_by_uri!(params[:calendar_object])
+      sched = @user.schedules.find_by_uri!(params[:calendar_object])
       sched.destroy
     end
 
@@ -79,7 +83,7 @@ class CalendarController < ApplicationController
       props[prop.name] = replace_xml_nsprefix(xml, prop.children.to_s)
     end
 
-    Calendar.create(props: props, uri: params[:calendar], user: @user)
+    @user.calendars.create(props: props, uri: params[:calendar])
     head :created
   end
 
@@ -89,12 +93,12 @@ class CalendarController < ApplicationController
 
     logger.info "REPORT type: #{type}"
     res = case type
-          when 'calendar-multiget'
-            report_multiget(xml)
-          when 'calendar-query'
-            report_query(xml)
-          else
-            return head :not_implemented
+            when 'calendar-multiget'
+              report_multiget(xml)
+            when 'calendar-query'
+              report_query(xml)
+            else
+              return head :not_implemented
           end
 
     render xml: res, status: :multi_status
@@ -107,7 +111,7 @@ class CalendarController < ApplicationController
     end
 
     xml = Nokogiri::XML(rawrequest)
-    cal = Calendar.find_by_uri!(params[:calendar])
+    cal = @user.calendars.find_by_uri!(params[:calendar])
     cal_props = cal.props
 
     # set properties
@@ -140,13 +144,14 @@ class CalendarController < ApplicationController
       xml = propfind_collections
     end
 
+    puts "xml: #{xml}"
     render xml: xml, status: :multi_status
   end
 
   private
 
   def set_src_and_dst
-    @src = Schedule.find_by_uri!(params[:calendar_object])
+    @src = @user.schedules.find_by_uri!(params[:calendar_object])
 
     begin
       @dst = Rails.application.routes.recognize_path(request.headers[:destination])
