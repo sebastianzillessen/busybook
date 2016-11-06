@@ -1,12 +1,12 @@
+ruby "2.3.1"
+
 source 'https://rubygems.org'
 
 gem 'rails', '5.0.0.1'
 gem 'rake'
 
 gem 'puma'
-gem 'sqlite3', group: :sqlite3
-gem 'mysql2', group: :mysql
-gem 'pg', group: :postgres
+gem 'pg'
 
 gem 'highline', require: false
 gem 'colorize', require: false
@@ -56,4 +56,9 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'shoulda-matchers'
+end
+
+
+group :production do
+
 end
