@@ -16,7 +16,8 @@ namespace :user do
         "supported-calendar-component-set": "<CALDAV:comp name=\\"VEVENT\\" />"
       }
 EOS
-    Calendar.create(props_json: props_json, uri: 'Private', user: @user)
+    @user.calendars.create(props_json: props_json, uri: 'Scheduled')
+    @user.calendars.create(props_json: props_json, uri: 'Proposed')
 
     props_json = <<EOS
       {

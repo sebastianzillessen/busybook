@@ -48,7 +48,7 @@ module Report
             when 'getetag'
               getetag(sched)
             when 'calendar-data'
-              sched.ics.encode(xml: :text)
+              sched.to_ical.encode(xml: :text)
           end
         end
         responses << [uri.text, results]

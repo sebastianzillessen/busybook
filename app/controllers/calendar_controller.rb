@@ -12,7 +12,7 @@ class CalendarController < ApplicationController
   before_action :set_src_and_dst, only: [:move, :copy]
 
   def options
-    methods = %w(OPTIONS GET PUT DELETE MKCALENDAR PROPFIND PROPPATCH REPORT COPY MOVE)
+    methods = %w(OPTIONS GET PUT DELETE MKCALENDAR PROPFIND PROPPATCH REPORT COPY MOVE ACL)
     headers['Allow'] = methods.join(', ')
     headers['DAV'] = '1, 2, calendar-access, calendarserver-subscribed'
     head :ok
@@ -41,9 +41,8 @@ class CalendarController < ApplicationController
       end
     end
 
-    sched = @user.schedules.new(uri: uri) unless sched
+    sched = @user.schedules.new(uri: uri, body: rawrequest) unless sched
     sched.calendar = @user.calendars.find_by_uri!(calendar)
-    sched.set_ics(rawrequest)
     if (sched.save)
       head :created
     else
@@ -143,8 +142,6 @@ class CalendarController < ApplicationController
       logger.info "PROPFIND target: collections"
       xml = propfind_collections
     end
-
-    puts "xml: #{xml}"
     render xml: xml, status: :multi_status
   end
 

@@ -10,6 +10,7 @@ gem 'pg', group: :postgres
 
 gem 'highline', require: false
 gem 'colorize', require: false
+gem 'icalendar'
 
 group :development do
   gem 'byebug'
@@ -22,4 +23,6 @@ group :development do
   gem 'hirb-unicode'
   gem 'erd', require: false
   gem "codeclimate-test-reporter", require: false
+  gem "erb2haml"
+
 end

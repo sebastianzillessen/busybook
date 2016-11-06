@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :schedules
   root to: proc { [200, {}, ['']] }
 
   methods = %w(options get put delete mkcalendar propfind proppatch report move copy)

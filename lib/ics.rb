@@ -19,6 +19,11 @@ module ICS
       end
     end
 
+    def set(key, value)
+      @ics[@default_comp_type][0][key] = value
+      @ics
+    end
+
     # Returns the first component type
     def comp_type
       # XXX

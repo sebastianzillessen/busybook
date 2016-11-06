@@ -9,7 +9,7 @@ namespace :export do
     ics = ""
 
     Schedule.where(calendar: Calendar.find_by_name(calendar)).find_each do |sched|
-      ics += sched.ics.strip + "\n"
+      ics += sched.to_ical + "\n"
     end
 
     f = open(filepath, "w")

@@ -26,7 +26,7 @@ module Propfind
 
       responses = [["/calendar/", results]]
 
-      if params[:calendar] == ""
+      if params[:calendar].empty?
         if request.headers["Depth"] == "1"
           cals = @user.calendars.all
         else
@@ -53,6 +53,9 @@ module Propfind
                 get_supported_report_set
               when 'resourcetype'
                 get_resource_type_calendar
+              #when 'allowed-sharing-modes'
+              #  get_allowed_sharing_modes
+                
             end
           end
         end
@@ -61,6 +64,10 @@ module Propfind
 
       responses
     end
+  end
+
+  def get_allowed_sharing_modes
+    '<C:allowed-sharing-modes xmlns:C="http://calendarserver.org/ns/"/>'
   end
 
 
