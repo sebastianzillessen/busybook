@@ -1,0 +1,17 @@
+= nav_bar fixed: :top, brand: "EasyShare", responsive: true do
+  = menu_group do 
+    =# menu_item "Analysis", analyses_path if can? :index, Analysis
+    =# menu_item "Research Questions", research_questions_path if can? :index, ResearchQuestion
+    =# menu_item "Models", models_path if can? :index, Model
+    =# menu_item "Datasets", datasets_path if can? :index, Dataset
+
+    = menu_divider
+    = drop_down 'Advanced' do
+      =# menu_item "Assumptions", assumptions_path if can? :index, Assumption
+      =# menu_item "Preferences", preferences_path if can? :index, Preference
+      =# menu_item 'User Management', admin_users_path if can? :index, Admin::UsersController
+  = menu_group pull: :right do
+    -# if current_user
+      =# menu_item "Log out (#{current_user.email})", destroy_user_session_path, method: :delete
+    -# else
+    = menu_item "Log In", ""#new_user_session_path

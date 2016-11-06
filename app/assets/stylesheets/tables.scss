@@ -1,0 +1,16 @@
+table {
+  &.table {
+    &.table-striped {
+      tr {
+        &[data-href] {
+          cursor: pointer;
+        }
+        &.active {
+          &, > td {
+            background-color: darken(#f9f9f9, 10);
+          }
+        }
+      }
+    }
+  }
+}

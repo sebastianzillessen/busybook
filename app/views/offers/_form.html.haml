@@ -1,0 +1,14 @@
+= semantic_form_for @offer do |f|
+  = f.inputs do
+    = f.input :email
+    = f.input :description, as: :string
+    %h3 Timeslots
+    #tasks
+      = f.semantic_fields_for :offered_schedules do |schedule|
+        = render 'offered_schedule_fields', f: schedule
+      .links
+        = link_to_add_association 'add timeslot', f, :offered_schedules,
+          wrap_object: Proc.new {|sched|  sched.calendar = @user.get_offer_calendar; sched}
+
+  = f.actions do
+    = f.action :submit, :as => :input

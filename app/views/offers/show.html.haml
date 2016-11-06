@@ -1,0 +1,8 @@
+%h3 Meeting with #{@offer.email}
+%p= @offer.description
+
+#calendar.show_offers{data: {calendar: offer_data_object(@offer)}}
+
+= link_to 'Edit', edit_offer_path(@offer)
+\|
+= link_to 'Back', offers_path

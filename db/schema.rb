@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161105230014) do
+ActiveRecord::Schema.define(version: 20161106153409) do
 
   create_table "calendars", force: :cascade do |t|
     t.text     "props_json"
@@ -26,8 +26,9 @@ ActiveRecord::Schema.define(version: 20161105230014) do
     t.integer  "user_id"
     t.string   "email"
     t.text     "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "approved",    default: false
     t.index ["user_id"], name: "index_offers_on_user_id"
   end
 
@@ -39,9 +40,11 @@ ActiveRecord::Schema.define(version: 20161105230014) do
     t.string   "uri"
     t.text     "ics"
     t.integer  "calendar_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.integer  "offer_id"
+    t.boolean  "approved",    default: false
+    t.boolean  "rejected",    default: false
     t.index ["calendar_id"], name: "index_schedules_on_calendar_id"
     t.index ["offer_id"], name: "index_schedules_on_offer_id"
     t.index ["updated_at"], name: "index_schedules_on_updated_at"

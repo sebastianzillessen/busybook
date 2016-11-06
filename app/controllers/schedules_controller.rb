@@ -3,7 +3,7 @@ class SchedulesController < ApplicationController
 
   # GET /schedules
   def index
-    @schedules = Schedule.all
+    @schedules = @user.schedules.all
   end
 
   # GET /schedules/1
@@ -12,7 +12,7 @@ class SchedulesController < ApplicationController
 
   # GET /schedules/new
   def new
-    @schedule = Schedule.new
+    @schedule = @user.schedules.new
   end
 
   # GET /schedules/1/edit
@@ -21,7 +21,7 @@ class SchedulesController < ApplicationController
 
   # POST /schedules
   def create
-    @schedule = Schedule.new(schedule_params)
+    @schedule = @user.schedules.new(schedule_params)
 
     if @schedule.save
       redirect_to @schedule, notice: 'Schedule was successfully created.'
@@ -46,13 +46,13 @@ class SchedulesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_schedule
-      @schedule = Schedule.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_schedule
+    @schedule = @user.schedules.find(params[:id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def schedule_params
-      params.fetch(:schedule, {})
-    end
+  # Only allow a trusted parameter "white list" through.
+  def schedule_params
+    params.require(:schedule).permit(:summary, :date_start, :date_end, :summary, :calendar_id)
+  end
 end

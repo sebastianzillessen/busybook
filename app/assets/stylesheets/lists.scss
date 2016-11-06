@@ -1,0 +1,14 @@
+ul {
+  li {
+    &.auto-show-empty {
+      &:not(:only-child){
+        display: none;
+      }
+    }
+  }
+}
+ul.list-group{
+  .list-group{
+    border: 1px solid #ddd;
+  }
+}

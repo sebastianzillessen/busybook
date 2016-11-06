@@ -1,4 +1,6 @@
 class Schedule < ActiveRecord::Base
+  default_scope { where(rejected: false) }
+
   belongs_to :calendar
   has_one :user, through: :calendar
   belongs_to :offer
@@ -6,11 +8,21 @@ class Schedule < ActiveRecord::Base
   validates :component, presence: true, inclusion: %w(VEVENT VTODO)
   validates :uri, presence: true, uniqueness: true
   validates :ics, presence: true
+  validates :calendar, presence: true
+  validates :user, presence: true
+  validates :date_start, :date_end, presence: true, not_in_past: true
+  validates :date_start, after: {attr: :date_end}
 
 
   before_validation :parse_and_save_ics
   before_validation :ensure_uri
 
+  def initialize(args)
+    super(args)
+    self.date_start = 1.hour.from_now if date_start.nil?
+    self.date_end = 2.hours.from_now if date_end.nil?
+
+  end
 
   def self.in_time_range(calendar, range_start, range_end)
     sql = ''
@@ -70,18 +82,26 @@ class Schedule < ActiveRecord::Base
 
 
   def date_start=(dstart)
-    event.dtstart = dstart
-    self[:date_start]= dstart
+    super(dstart)
+    event.dtstart = date_start
   end
 
   def date_end=(dend)
-    event.dtend = dend
-    self[:date_end]= dend
+    super(dend)
+    event.dtend = date_end
   end
 
   def summary=(sum)
-    event.summary = sum
-    self[:summary] = sum
+    super(sum)
+    event.summary = summary
+  end
+
+  def description=(desc)
+    event.description = desc
+  end
+
+  def url=(url)
+    event.url = url
   end
 
 

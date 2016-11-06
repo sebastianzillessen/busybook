@@ -1,11 +1,7 @@
-= form_for(schedule) do |f|
-  - if schedule.errors.any?
-    #error_explanation
-      %h2
-        = pluralize(schedule.errors.count, "error")
-        prohibited this schedule from being saved:
-      %ul
-        - schedule.errors.full_messages.each do |message|
-          %li= message
-  .actions
-    = f.submit
+= semantic_form_for @schedule do |f|
+  = f.inputs do
+    = f.input :calendar, collection: @user.calendars
+    = f.input :summary
+    = f.input :date_start
+    = f.input :date_end
+  = f.actions

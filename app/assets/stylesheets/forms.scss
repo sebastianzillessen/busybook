@@ -1,0 +1,40 @@
+@import "variables";
+
+.button_to,
+.button_to div {
+  display: inline;
+}
+
+@keyframes blinker {
+  50% { opacity: 0.0; }
+}
+
+form {
+  &.loading {
+    &:before {
+      content: '';
+      text-align: center;
+      display: block;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: $transparent-grey; /* For browsers that do not support gradients */
+      background: -webkit-radial-gradient($transparent-grey, $transparent-grey, $transparent); /* Safari 5.1 to 6.0 */
+      background: -o-radial-gradient($transparent-grey, $transparent-grey, $transparent); /* For Opera 11.6 to 12.0 */
+      background: -moz-radial-gradient($transparent-grey, $transparent-grey, $transparent); /* For Firefox 3.6 to 15 */
+      background: radial-gradient($transparent-grey, $transparent-grey, $transparent); /* Standard syntax */
+    }
+    &:after {
+      content: "Loading...";
+      top: 50%;
+      margin-top: -1em;
+      width: 100%;
+      position: absolute;
+      height: 100%;
+      text-align: center;
+      animation: blinker 1s linear infinite;
+    }
+  }
+}

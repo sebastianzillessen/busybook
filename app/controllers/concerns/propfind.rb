@@ -55,7 +55,7 @@ module Propfind
                 get_resource_type_calendar
               #when 'allowed-sharing-modes'
               #  get_allowed_sharing_modes
-                
+
             end
           end
         end
@@ -114,8 +114,8 @@ module Propfind
   end
 
   def get_last_change_timestamp
-    s = @user.schedules.order('updated_at').last
-    (s) ? s.updated_at.to_i.to_s : ''
+    timestamps=[@user, Schedule.unscoped.order('updated_at').last, @user.offers.order('updated_at').last, @user.calendars.order('updated_at').last]
+    timestamps.map { |i| i.try(:updated_at).try(:to_i) }.reject(&:nil?).max
   end
 
   def redirect_to_correct_url
